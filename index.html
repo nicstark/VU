@@ -42,6 +42,9 @@
 
 <script language="JavaScript">
 
+
+    //AXIS STUFF
+
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
     var padding = {top: 0, right: 0, bottom: 0, left: 0};
 
@@ -118,6 +121,9 @@ svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
             "stroke-width" : "1px"
         });
 
+
+        // DATA
+
     var percentA = 75;
     var percentB = 100- percentA;
     var moe = 5
@@ -127,13 +133,8 @@ svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
 
  
   
-    function NewValue(){
-        if(Math.random() > .5){
-            return Math.round(Math.random()*100);
-        } else {
-            return (Math.random()*100).toFixed(1);
-        }
-    }
+        // VISUALS
+
 
     function liquidFillGaugeDefaultSettings(){
     return {
@@ -151,12 +152,6 @@ svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
         waveAnimate: true, // Controls if the wave scrolls or is static.
         waveColor: "#000", // The color of the fill wave.
         waveOffset: 0, // The amount to initially offset the wave. 0 = no offset. 1 = offset of one full wave.
-        // textVertPosition: .5, // The height at which to display the percentage text withing the wave circle. 0 = bottom, 1 = top.
-        // textSize: 0, // The relative height of the text to display in the wave circle. 1 = 50%
-        // valueCountUp: false, // If true, the displayed value counts up from 0 to it's final value upon loading. If false, the final value is displayed.
-        // displayPercent: false, // If true, a % symbol is displayed after the value.
-        // textColor: "#045681", // The color of the value text when the wave does not overlap it.
-        // waveTextColor: "#A4DBf8" // The color of the value text when the wave overlaps it.
     };
 }
 
@@ -233,16 +228,11 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         .range([0, waveClipWidth-fillCircleRadius*2]) // Push the clip area one full wave then snap back.
         .domain([0,1]);
 
-    // Center the gauge within the parent SVG.
-
-    // svg.attr('transform','translate('+locationX+','+locationY+')');
-
 
     var gaugeGroup = gauge.append("g")
-        .attr('transform','translate('+locationX+','+locationY+')');
+        .attr('transform','translate('+locationX+')');
 
-
-       var line = gauge.select("g")
+    var line = gauge.select("g")
         .append("path")
         .attr("d", "M 0 " + yPos  + " L " + radius + " " + yPos )
         .style("stroke", "grey");
@@ -258,33 +248,22 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     var waveGroup = gaugeGroup.append("defs")
         .append("clipPath")
         .attr("id", "clipWave" + elementId);
+
     var wave = waveGroup.append("path")
         .datum(data)
         .attr("d", clipArea)
         .attr("T", 0);
 
-
-
-
-
-
     // The inner circle with the clipping wave attached.
     var fillCircleGroup = gaugeGroup.append("g")
         .attr("clip-path", "url(#clipWave" + elementId + ")");
 
-    // var line = gauge.append("path")
-    //     .attr("d", "M 0 " + yPos  + " L " + radius + " " + yPos )
-    //     .style("stroke", "grey")
 
     fillCircleGroup.append("rect")
         .attr("width", radius)
         .attr("height", height)
         .style("fill", "#000")
         .style("fill-opacity", 1);
-     
-
-
-
 
     // Make the wave rise. wave and waveGroup are separate so that horizontal and vertical movement can be controlled independently.
     var waveGroupXPosition = fillCircleMargin+fillCircleRadius*2-waveClipWidth;
