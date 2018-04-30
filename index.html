@@ -46,10 +46,9 @@
     //AXIS STUFF
 
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
-    var padding = {top: 0, right: 0, bottom: 0, left: 0};
 
-    var width = window.innerWidth -100 - margin.left - margin.right - padding.left - padding.right,
-        height = window.innerHeight - 100 - margin.top - margin.bottom - padding.top - padding.bottom;
+    var width = window.innerWidth -100 - margin.left - margin.right,
+        height = window.innerHeight - 100 - margin.top - margin.bottom;
     // var width = window.innerWidth;
     // var height = window.innerHeight- 200;
     var x = d3.scale.identity()
@@ -57,11 +56,12 @@
 
     var y = d3.scale.identity()
         .domain([0, 100]);
-        var x = d3.scale.linear()
-    .range([0, width]);
+
+    var x = d3.scale.linear()
+        .range([0, width]);
 
     var y = d3.scale.linear()
-    .range([height, 0]);
+        .range([height, 0]);
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -72,10 +72,10 @@
         .orient("left");
 
     var svg = d3.select("body").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
 
@@ -89,7 +89,6 @@ svg.append("rect")
     .attr("height", innerHeight);
 
 var g = svg.append("g")
-    .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
 
 // g.append("rect")
 //     .attr("class", "inner")
@@ -103,7 +102,7 @@ g.append("g")
 
 g.append("g")
     .attr("class", "y axis")
-    .attr("transform", "translate(" + width + ",0)")
+    .attr("transform", "translate(" + width + ", 0)")
     .call(yAxis);
 
 svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
@@ -165,11 +164,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     // var gauge = d3.select("#" + elementId);
     var radius = width/5;
     var yPos = height - height*(value/100);
-    // var radius = Math.min(parseInt(gauge.style("width")), parseInt(gauge.style("height")))/2;
-    // var locationX = parseInt(gauge.style("width"))/2 - radius;
-    // var locationY = parseInt(gauge.style("height"))/2 - radius;
-    var locationY = 0;
-    var locationX = radius*pos;
+    var xPos = radius*pos;
     var fillPercent = Math.max(config.minValue, Math.min(config.maxValue, value))/config.maxValue;
 
     var wavePositionScale = d3.scale.linear()
@@ -192,7 +187,6 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     var fillCircleMargin = circleThickness + circleFillGap;
     var fillCircleRadius = height/2;
     var waveHeight = fillCircleRadius*waveHeightScale(fillPercent*100);
-
     var waveLength = fillCircleRadius*2/config.waveCount;
     var waveClipCount = 1+config.waveCount;
     var waveClipWidth = waveLength*waveClipCount;
@@ -204,14 +198,12 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         data.push({x: i/(40*waveClipCount), y: (i/(40))});
     }
 
-    // Scales for drawing the outer circle.
-    var gaugeCircleX = d3.scale.linear().range([0,2*Math.PI]).domain([0,1]);
-    var gaugeCircleY = d3.scale.linear().range([0,radius]).domain([0,radius]);
 
     // Scales for controlling the size of the clipping path.
     var waveScaleX = d3.scale.linear()
         .range([0,waveClipWidth])
         .domain([0,1]);
+
     var waveScaleY = d3.scale.linear()
         .range([0,waveHeight])
         .domain([0,1]);
@@ -224,13 +216,14 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         // .range([(fillCircleMargin+fillCircleRadius*2+waveHeight),(fillCircleMargin-waveHeight)])
         .range([(fillCircleMargin+fillCircleRadius*2),(fillCircleMargin)])
         .domain([0,1]);
+
     var waveAnimateScale = d3.scale.linear()
         .range([0, waveClipWidth-fillCircleRadius*2]) // Push the clip area one full wave then snap back.
         .domain([0,1]);
 
 
     var gaugeGroup = gauge.append("g")
-        .attr('transform','translate('+locationX+')');
+        .attr('transform','translate('+xPos+',0)');
 
     var line = gauge.select("g")
         .append("path")
