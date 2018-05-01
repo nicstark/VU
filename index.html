@@ -160,8 +160,9 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     var barWidth = windowWidth/5;
     var yPos = windowHeight - windowHeight*(value/100);
     var xPos = barWidth*pos;
-    var fillPercent = Math.max(config.minValue, Math.min(config.maxValue, value))/config.maxValue;
-    console.log(fillPercent);
+    // var fillPercent = Math.max(config.minValue, Math.min(config.maxValue, value))/config.maxValue;
+    var fillPercent = value/100;
+
 
     var wavePositionScale = d3.scale.linear()
         .range([0, 100])
@@ -174,7 +175,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
             .domain([0, 50, 100]);
     } else {
         waveHeightScale = d3.scale.linear()
-            .range([moe/100,moe/100])
+            .range([moe/200,moe/200])
             .domain([0,100]);
     }
 
@@ -219,7 +220,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
 
 
     var gaugeGroup = gauge.append("g")
-        .attr('transform','translate('+xPos+',0)');
+        .attr('transform','translate('+xPos+', '+waveHeight+')');
 
     var line = gauge.select("g")
         .append("path")
