@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="http://d3js.org/d3.v3.min.js" language="JavaScript"></script>
-    <script src="liquidFillGauge.js" language="JavaScript"></script>
+    <!-- <script src="liquidFillGauge.js" language="JavaScript"></script> -->
     <style>
         .liquidFillGaugeText { font-family: Helvetica; font-weight: bold; }
 
@@ -161,6 +161,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     var yPos = windowHeight - windowHeight*(value/100);
     var xPos = barWidth*pos;
     var fillPercent = Math.max(config.minValue, Math.min(config.maxValue, value))/config.maxValue;
+    console.log(fillPercent);
 
     var wavePositionScale = d3.scale.linear()
         .range([0, 100])
@@ -173,7 +174,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
             .domain([0, 50, 100]);
     } else {
         waveHeightScale = d3.scale.linear()
-            .range([margin/106,margin/106])
+            .range([moe/100,moe/100])
             .domain([0,100]);
     }
 
@@ -181,7 +182,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
     var circleFillGap = config.circleFillGap * barWidth;
     var fillCircleMargin = circleThickness + circleFillGap;
     var fillCirclebarWidth = windowHeight/2;
-    var waveHeight = fillCirclebarWidth*waveHeightScale(fillPercent*100);
+    var waveHeight = windowHeight*waveHeightScale(fillPercent*100);
     var waveLength = fillCirclebarWidth*2/config.waveCount;
     var waveClipCount = 1+config.waveCount;
     var waveClipWidth = waveLength*waveClipCount;
