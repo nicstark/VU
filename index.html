@@ -47,21 +47,16 @@
 
     var margin = {top: 50, right: 50, bottom: 50, left: 50};
 
-    var width = window.innerWidth -100 - margin.left - margin.right,
-        height = window.innerHeight - 100 - margin.top - margin.bottom;
-    // var width = window.innerWidth;
+    var windowWidth = window.innerWidth -100 - margin.left - margin.right;
+    var windowHeight = window.innerHeight - 100 - margin.top - margin.bottom;
+    // var windowWidth = window.innerWidth;
     // var height = window.innerHeight- 200;
-    var x = d3.scale.identity()
-       .domain([0, 100]);
-
-    var y = d3.scale.identity()
-        .domain([0, 100]);
 
     var x = d3.scale.linear()
-        .range([0, width]);
+        .range([0, windowWidth]);
 
     var y = d3.scale.linear()
-        .range([height, 0]);
+        .range([windowHeight, 0]);
 
     var xAxis = d3.svg.axis()
         .scale(x)
@@ -72,8 +67,8 @@
         .orient("left");
 
     var svg = d3.select("body").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", windowWidth + margin.left + margin.right)
+        .attr("height", windowHeight + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -92,17 +87,17 @@ var g = svg.append("g")
 
 // g.append("rect")
 //     .attr("class", "inner")
-//     .attr("width", width)
+//     .attr("width", windowWidth)
 //     .attr("height", height);
 
 g.append("g")
     .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
+    .attr("transform", "translate(0," + windowHeight + ")")
     .call(xAxis);
 
 g.append("g")
     .attr("class", "y axis")
-    .attr("transform", "translate(" + width + ", 0)")
+    .attr("transform", "translate(" + windowWidth + ", 0)")
     .call(yAxis);
 
 svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
@@ -111,7 +106,7 @@ svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
         {
             "class":"horizontalGrid",
             "x1" : margin.left,
-            "x2" : width,
+            "x2" : windowWidth,
             "y1" : function(d){ return y(d);},
             "y2" : function(d){ return y(d);},
             "fill" : "none",
@@ -132,18 +127,18 @@ svg.selectAll("line.horizontalGrid").data(y.ticks(10)).enter()
 
  
   
-        // VISUALS
+        // BARS
 
 
     function liquidFillGaugeDefaultSettings(){
     return {
         minValue: 0, // The gauge minimum value.
         maxValue: 100, // The gauge maximum value.
-        circleThickness: 0.0, // The outer circle thickness as a percentage of it's radius.
-        circleFillGap: 0.0, // The size of the gap between the outer circle and wave circle as a percentage of the outer circles radius.
+        circleThickness: 0.0, // The outer circle thickness as a percentage of it's barWidth.
+        circleFillGap: 0.0, // The size of the gap between the outer circle and wave circle as a percentage of the outer circles barWidth.
         circleColor: "#000", // The color of the outer circle.
-        waveHeight: 0.1, // The wave height as a percentage of the radius of the wave circle.
-        waveCount: 1, // The number of full waves per width of the wave circle.
+        waveHeight: 0.1, // The wave height as a percentage of the barWidth of the wave circle.
+        waveCount: 1, // The number of full waves per windowWidth of the wave circle.
         waveRiseTime: 00, // The amount of time in milliseconds for the wave to rise from 0 to it's final height.
         waveAnimateTime: 5000, // The amount of time in milliseconds for a full wave to enter the wave circle.
         waveRise: false, // Control if the wave should rise from 0 to it's full height, or start at it's full height.
@@ -162,14 +157,14 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         .attr("id", elementId)
        
     // var gauge = d3.select("#" + elementId);
-    var radius = width/5;
-    var yPos = height - height*(value/100);
-    var xPos = radius*pos;
+    var barWidth = windowWidth/5;
+    var yPos = windowHeight - windowHeight*(value/100);
+    var xPos = barWidth*pos;
     var fillPercent = Math.max(config.minValue, Math.min(config.maxValue, value))/config.maxValue;
 
     var wavePositionScale = d3.scale.linear()
         .range([0, 100])
-        .domain([0,height]);
+        .domain([0,windowHeight]);
 
     var waveHeightScale;
     if(config.waveHeightScaling){
@@ -182,12 +177,12 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
             .domain([0,100]);
     }
 
-    var circleThickness = config.circleThickness * radius;
-    var circleFillGap = config.circleFillGap * radius;
+    var circleThickness = config.circleThickness * barWidth;
+    var circleFillGap = config.circleFillGap * barWidth;
     var fillCircleMargin = circleThickness + circleFillGap;
-    var fillCircleRadius = height/2;
-    var waveHeight = fillCircleRadius*waveHeightScale(fillPercent*100);
-    var waveLength = fillCircleRadius*2/config.waveCount;
+    var fillCirclebarWidth = windowHeight/2;
+    var waveHeight = fillCirclebarWidth*waveHeightScale(fillPercent*100);
+    var waveLength = fillCirclebarWidth*2/config.waveCount;
     var waveClipCount = 1+config.waveCount;
     var waveClipWidth = waveLength*waveClipCount;
 
@@ -213,12 +208,12 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         // The clipping area size is the height of the fill circle + the wave height, so we position the clip wave
         // such that the it will overlap the fill circle at all when at 0%, and will totally cover the fill
         // circle at 100%.
-        // .range([(fillCircleMargin+fillCircleRadius*2+waveHeight),(fillCircleMargin-waveHeight)])
-        .range([(fillCircleMargin+fillCircleRadius*2),(fillCircleMargin)])
+        // .range([(fillCircleMargin+fillCirclebarWidth*2+waveHeight),(fillCircleMargin-waveHeight)])
+        .range([(fillCircleMargin+fillCirclebarWidth*2),(fillCircleMargin)])
         .domain([0,1]);
 
     var waveAnimateScale = d3.scale.linear()
-        .range([0, waveClipWidth-fillCircleRadius*2]) // Push the clip area one full wave then snap back.
+        .range([0, waveClipWidth-fillCirclebarWidth*2]) // Push the clip area one full wave then snap back.
         .domain([0,1]);
 
 
@@ -227,7 +222,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
 
     var line = gauge.select("g")
         .append("path")
-        .attr("d", "M 0 " + yPos  + " L " + radius + " " + yPos )
+        .attr("d", "M 0 " + yPos  + " L " + barWidth + " " + yPos )
         .style("stroke", "grey");
 
     // The clipping wave area.
@@ -235,7 +230,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         .x(function(d) { return waveScaleX(d.x); } )
         .y0(function(d) { return 3 +waveScaleY(Math.sin(Math.PI*2*config.waveOffset*-1 + Math.PI*2*(1-config.waveCount) + d.y*2*Math.PI));} )
         // .y1(function(d) { return 1 + waveScaleY(Math.sin(Math.PI*2*config.waveOffset*-1 + Math.PI*2*(1-config.waveCount) + d.y*2*Math.PI));} )
-        .y1(function(d) { return (fillCircleRadius*2 + waveHeight); } );
+        .y1(function(d) { return (fillCirclebarWidth*2 + waveHeight); } );
 
 
     var waveGroup = gaugeGroup.append("defs")
@@ -253,13 +248,13 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
 
 
     fillCircleGroup.append("rect")
-        .attr("width", radius)
-        .attr("height", height)
+        .attr("width", barWidth)
+        .attr("height", windowHeight)
         .style("fill", "#000")
         .style("fill-opacity", 1);
 
     // Make the wave rise. wave and waveGroup are separate so that horizontal and vertical movement can be controlled independently.
-    var waveGroupXPosition = fillCircleMargin+fillCircleRadius*2-waveClipWidth;
+    var waveGroupXPosition = fillCircleMargin+fillCirclebarWidth*2-waveClipWidth;
     if(config.waveRise){
         waveGroup.attr('transform','translate('+waveGroupXPosition+','+waveRiseScale(0)+')')
             .transition()
