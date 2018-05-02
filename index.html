@@ -179,12 +179,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
             .domain([0,100]);
     }
 
-    // var circleThickness = config.circleThickness * barWidth;
-    // var circleThickness = 0;
-    // var circleFillGap = 0;
-    // var circleFillGap = config.circleFillGap * barWidth;
-    // var fillCircleMargin = 0;
-    // var fillCirclebarWidth = windowHeight/2;
+
     var waveHeight = windowHeight*waveHeightScale(fillPercent*100);
     var waveLength = windowHeight/config.waveCount;
     var waveClipCount = 1+config.waveCount;
@@ -209,11 +204,6 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
 
     // Scales for controlling the position of the clipping path.
     var waveRiseScale = d3.scale.linear()
-        // The clipping area size is the height of the fill circle + the wave height, so we position the clip wave
-        // such that the it will overlap the fill circle at all when at 0%, and will totally cover the fill
-        // circle at 100%.
-        // .range([(fillCircleMargin+fillCirclebarWidth*2+waveHeight),(fillCircleMargin-waveHeight)])
-        // .range([(fillCircleMargin+fillCirclebarWidth*2),(fillCircleMargin)])
         .range([(windowHeight),(0)])
         .domain([0,1]);
 
@@ -223,7 +213,7 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
 
 
     var gaugeGroup = gauge.append("g")
-        .attr('transform','translate('+xPos+', 100)');
+        .attr('transform','translate('+xPos+', 0)');
 
     var line = gauge.select("g")
         .append("path")
@@ -259,7 +249,6 @@ function loadLiquidFillGauge(elementId, value, margin, pos, config) {
         .style("fill-opacity", 1);
 
     // Make the wave rise. wave and waveGroup are separate so that horizontal and vertical movement can be controlled independently.
-    // var waveGroupXPosition = fillCircleMargin+fillCirclebarWidth*2-waveClipWidth;
     var waveGroupXPosition = windowHeight-waveClipWidth;
     if(config.waveRise){
         waveGroup.attr('transform','translate('+waveGroupXPosition+','+waveRiseScale(0)+')')
